@@ -30,7 +30,7 @@ dependencies {
 
     implementation("org.jetbrains.kotlin:kotlin-stdlib:1.6.10")
 
-    implementation("io.insert-koin:koin-android:3.1.2")
+    implementation("io.insert-koin:koin-android:3.1.6")
 
     implementation("androidx.room:room-runtime:2.4.2")
     implementation("androidx.room:room-ktx:2.4.2")
