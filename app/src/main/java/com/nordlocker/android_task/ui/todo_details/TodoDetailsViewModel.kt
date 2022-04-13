@@ -1,13 +1,13 @@
 package com.nordlocker.android_task.ui.todo_details
 
-import androidx.lifecycle.*
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.nordlocker.domain.interfaces.TodoStorage
-import com.nordlocker.domain.models.Todo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import java.time.Instant
 
