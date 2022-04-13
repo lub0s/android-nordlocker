@@ -4,19 +4,21 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nordlocker.network.TodoApi
 import com.nordlocker.domain.interfaces.TodoStorage
+import com.nordlocker.domain.models.Todo
 import com.nordlocker.domain.models.TodosOrder
-import com.nordlocker.network.response.TodoListResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
-data class TodosSyncStatus(
+data class TodosScreenState(
     val isLoading: Boolean = false,
+    val todos: List<Todo> = emptyList()
 )
 
-data class TodosSyncFailed(val throwable: Throwable)
+data class TodosSyncFailed(
+    val throwable: Throwable
+)
 
 class TodoListViewModel(
     private val todoStorage: TodoStorage,
@@ -25,18 +27,19 @@ class TodoListViewModel(
 
     val order = todoStorage.observeOrder()
 
-    val todos = todoStorage.observeAll()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(500),
-            emptyList()
-        )
+    private val todos = todoStorage.observeAll()
+    private val isLoading = MutableStateFlow(false)
 
     private val _syncEvents = Channel<TodosSyncFailed>(Channel.UNLIMITED)
     val syncEvents = _syncEvents.consumeAsFlow()
 
-    private val _syncStatus = MutableStateFlow(TodosSyncStatus())
-    val syncStatus: Flow<TodosSyncStatus> = _syncStatus
+    val screenState = isLoading.combine(todos) { loading, localTodos ->
+        TodosScreenState(isLoading = loading, todos = localTodos)
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(500),
+        TodosScreenState()
+    )
 
     init {
         fetchTodos()
@@ -49,18 +52,16 @@ class TodoListViewModel(
     }
 
     fun fetchTodos() {
-        _syncStatus.update { it.copy(isLoading = true) }
+        isLoading.update { true }
 
         viewModelScope.launch(Dispatchers.Default) {
-            delay(1500L)
-
             try {
                 val loaded = api.getTodoList().toDomain()
                 todoStorage.updateOrCreate(loaded.data.orEmpty())
             } catch (throwable: Throwable) {
                 _syncEvents.send(TodosSyncFailed(throwable))
             } finally {
-                _syncStatus.update { it.copy(isLoading = false) }
+                isLoading.update { false }
             }
         }
     }

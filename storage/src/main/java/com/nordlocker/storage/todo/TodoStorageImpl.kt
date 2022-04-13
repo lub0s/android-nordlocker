@@ -5,6 +5,7 @@ import com.nordlocker.domain.models.Todo
 import com.nordlocker.domain.models.TodosOrder
 import com.nordlocker.storage.todo.TodoEntity.Companion.toEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
@@ -31,9 +32,11 @@ class TodoStorageImpl(
                     TodosOrder.COMPLETED -> dao.observeCompleted()
                 }.map { todos -> todos.map { todo -> todo.toDomain() } }
             }
+            .distinctUntilChanged()
 
     override fun observeOrder(): Flow<TodosOrder> =
         orderDatabase.observe()
+            .distinctUntilChanged()
 
     override fun getDefaultOrder(): TodosOrder =
         orderDatabase.defaultOrder

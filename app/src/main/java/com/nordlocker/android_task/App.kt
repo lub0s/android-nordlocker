@@ -12,7 +12,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        val koinApp = startKoin {
+        startKoin {
             androidContext(this@App)
             modules(storageModule, networkModule, appModule)
         }

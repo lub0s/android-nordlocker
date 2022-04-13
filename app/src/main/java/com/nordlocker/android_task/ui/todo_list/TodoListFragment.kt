@@ -40,24 +40,15 @@ class TodoListFragment : Fragment() {
         val adapter = bindAdapter(binding)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.todos
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collect { todos ->
-                    binding.empty.isVisible = todos.isEmpty()
-                    adapter.submitList(todos)
-                }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.order
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { selectedOrder -> bindToolbarMenu(selectedOrder, binding) }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.syncStatus
+            viewModel.screenState
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collect { syncStatus -> bindSyncStatus(syncStatus, binding) }
+                .collect { screenState -> bindScreenState(screenState, binding, adapter) }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -118,12 +109,17 @@ class TodoListFragment : Fragment() {
         binding.root.postDelayed({ binding.todos.scrollToPosition(0) }, 16 * 3L)
     }
 
-    private fun bindSyncStatus(
-        syncStatus: TodosSyncStatus,
+    private fun bindScreenState(
+        syncStatus: TodosScreenState,
         binding: TodoListFragmentBinding,
+        adapter: TodoListAdapter,
     ) {
         binding.swipeRefreshLayout.isRefreshing = syncStatus.isLoading
         binding.swipeRefreshLayout.setOnRefreshListener { viewModel.fetchTodos() }
+
+        val todos = syncStatus.todos
+        binding.empty.isVisible = todos.isEmpty()
+        adapter.submitList(todos)
     }
 
     private fun bindSyncFailed(binding: TodoListFragmentBinding) {
