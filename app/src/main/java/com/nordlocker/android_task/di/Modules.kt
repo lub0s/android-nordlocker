@@ -13,5 +13,5 @@ val appModule = module {
     single { TodoApi(client = get()) }
 
     viewModel { TodoListViewModel(get(), get()) }
-    viewModel { parameters -> TodoDetailsViewModel(parameters.get(), get()) }
+    viewModel { parameters -> TodoDetailsViewModel(parameters.get(), get(), get()) }
 }

@@ -1,9 +1,6 @@
 package com.nordlocker.android_task.ui.todo_details
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.nordlocker.domain.interfaces.TodoStorage
 import com.nordlocker.domain.models.Todo
 import kotlinx.coroutines.Dispatchers
@@ -15,20 +12,25 @@ import java.time.Instant
 sealed class DetailsEvent
 object Close : DetailsEvent()
 
+private const val todoContentKey = "todo-content-key"
+
 class TodoDetailsViewModel(
     todoId: Int,
     private val storage: TodoStorage,
+    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
-    private val _todo = MutableLiveData<Todo>()
-    val todo: LiveData<Todo> = _todo
+    private val _todo = savedStateHandle.getLiveData<TodoDetail>(todoContentKey)
+    val todo: LiveData<TodoDetail> = _todo
 
     private val _events = Channel<DetailsEvent>(capacity = Channel.UNLIMITED)
     val events = _events.consumeAsFlow()
 
     init {
-        viewModelScope.launch(Dispatchers.Default) {
-            _todo.postValue(storage.get(todoId))
+        if (_todo.value == null) {
+            viewModelScope.launch(Dispatchers.Default) {
+                _todo.postValue(storage.get(todoId).toDetail())
+            }
         }
     }
 
@@ -59,7 +61,7 @@ class TodoDetailsViewModel(
 
         viewModelScope.launch(Dispatchers.Default) {
             storage.updateOrCreate(
-                listOf(update(todo))
+                listOf(update(todo.toDomain()))
             )
         }
     }

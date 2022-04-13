@@ -21,9 +21,10 @@ class TodoListViewModel(
        }
     }
 
-    private val order = MutableStateFlow(TodosOrder.NOT_COMPLETED)
+    private val _order = MutableStateFlow(TodosOrder.NOT_COMPLETED)
+    val order: Flow<TodosOrder> = _order
 
-    val todos = order.flatMapLatest { selectedOrder ->
+    val todos = _order.flatMapLatest { selectedOrder ->
         todoStorage.observeAll(selectedOrder)
     }.stateIn(
         viewModelScope,
@@ -32,6 +33,6 @@ class TodoListViewModel(
     )
 
     fun updateOrder(selected: TodosOrder) {
-        order.value = selected
+        _order.value = selected
     }
 }
