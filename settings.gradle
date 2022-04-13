@@ -1,0 +1,4 @@
+rootProject.name = "android-task"
+include ':app'
+include ':storage'
+include ':domain'
