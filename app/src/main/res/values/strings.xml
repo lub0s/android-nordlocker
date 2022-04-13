@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name">Todosimo</string>
 
+    <string name="todos_empty">No todos available, try refreshing or adding a new one</string>
+
     <string name="todo_message_hint">message</string>
 
     <string name="filter_recent">Recently updated</string>

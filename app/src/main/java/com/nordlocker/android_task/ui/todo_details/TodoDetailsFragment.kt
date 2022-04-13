@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
@@ -77,6 +78,13 @@ class TodoDetailsFragment : Fragment() {
             true -> R.string.todo_action_done
             false -> R.string.todo_action_not_done
         }.let(::getString)
+
+        binding.complete.setBackgroundColor(
+            when (todoDetail.completed) {
+                true -> R.color.todo_done
+                false -> R.color.todo_not_done
+            }.let { colorRes -> ContextCompat.getColor(requireContext(), colorRes) }
+        )
 
         binding.complete.setOnClickListener {
             when (todoDetail.completed) {

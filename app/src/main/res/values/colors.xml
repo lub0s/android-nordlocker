@@ -9,4 +9,8 @@
     <color name="white">#FFFFFFFF</color>
 
     <color name="divider_light">#32000000</color>
+
+    <color name="todo_not_done">#009688</color>
+    <color name="todo_done">#E91E63</color>
+
 </resources>

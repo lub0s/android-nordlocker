@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -11,8 +10,6 @@
     <include
         android:id="@+id/toolbar_layout"
         layout="@layout/appbar" />
-
-
 
     <ScrollView
         android:id="@+id/message_wrapper"
@@ -33,6 +30,7 @@
             android:importantForAutofill="no"
             android:inputType="textMultiLine"
             android:minLines="20"
+            android:padding="@dimen/padding_default"
             android:textAlignment="textStart"
             tools:text="sample text" />
 
@@ -42,13 +40,12 @@
         android:id="@+id/complete"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
-        android:elevation="8dp"
         android:gravity="center"
-        android:padding="16dp"
+        android:padding="@dimen/padding_default"
         android:textAllCaps="true"
         android:textColor="?attr/colorOnPrimary"
         android:textStyle="bold"
+        app:elevation="@dimen/elevation_default"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
