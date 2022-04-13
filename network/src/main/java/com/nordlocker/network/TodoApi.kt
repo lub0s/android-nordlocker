@@ -1,6 +1,6 @@
-package com.nordlocker.android_task.network
+package com.nordlocker.network
 
-import com.nordlocker.android_task.network.response.TodoListResponse
+import com.nordlocker.network.response.TodoListResponse
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*

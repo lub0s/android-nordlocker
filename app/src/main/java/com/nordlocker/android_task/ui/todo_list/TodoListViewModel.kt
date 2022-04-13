@@ -2,7 +2,7 @@ package com.nordlocker.android_task.ui.todo_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nordlocker.android_task.network.TodoApi
+import com.nordlocker.network.TodoApi
 import com.nordlocker.domain.interfaces.TodoStorage
 import com.nordlocker.domain.models.TodosOrder
 import kotlinx.coroutines.Dispatchers

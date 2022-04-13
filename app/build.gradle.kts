@@ -43,6 +43,7 @@ dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:1.1.5")
 
     implementation(project(":storage"))
+    implementation(project(":network"))
     implementation(project(":domain"))
 
     implementation("androidx.multidex:multidex:2.0.1")

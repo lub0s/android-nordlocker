@@ -1,4 +1,4 @@
-package com.nordlocker.android_task.network
+package com.nordlocker.network
 
 import io.ktor.client.*
 import io.ktor.client.features.*

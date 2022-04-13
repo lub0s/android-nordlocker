@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
       <module name="android-task.app" target="11" />
+      <module name="android-task.network" target="11" />
       <module name="android-task.storage" target="11" />
     </bytecodeTargetLevel>
   </component>
