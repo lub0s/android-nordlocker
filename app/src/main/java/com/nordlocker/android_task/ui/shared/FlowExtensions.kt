@@ -7,7 +7,6 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-
 inline fun <T> Fragment.collectOnStarted(flow: Flow<T>, crossinline collector: (T) -> Unit) {
     viewLifecycleOwner.lifecycleScope.launch {
         flow

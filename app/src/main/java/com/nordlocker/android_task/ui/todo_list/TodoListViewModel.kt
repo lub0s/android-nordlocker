@@ -31,7 +31,7 @@ class TodoListViewModel(
     private val isLoading = MutableStateFlow(false)
 
     private val _syncEvents = Channel<TodosSyncFailed>(Channel.UNLIMITED)
-    val syncEvents = _syncEvents.consumeAsFlow()
+    val syncEvents = _syncEvents.receiveAsFlow()
 
     val screenState = isLoading.combine(todos) { loading, localTodos ->
         TodosScreenState(isLoading = loading, todos = localTodos)
