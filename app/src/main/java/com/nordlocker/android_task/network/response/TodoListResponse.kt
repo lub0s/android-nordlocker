@@ -1,5 +1,6 @@
 package com.nordlocker.android_task.network.response
 
+import com.nordlocker.domain.models.TodoList
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -11,4 +12,11 @@ data class TodoListResponse(
     val meta: MetaResponse? = null,
     @SerialName("data")
     val data: List<TodoResponse>? = null
-)
+) {
+
+    fun toDomain() = TodoList(
+        code = code,
+        meta = meta?.toDomain(),
+        data = data?.map { it.toDomain() }
+    )
+}

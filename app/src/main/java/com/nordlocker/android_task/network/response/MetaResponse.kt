@@ -1,5 +1,6 @@
 package com.nordlocker.android_task.network.response
 
+import com.nordlocker.domain.models.Meta
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
@@ -8,7 +9,6 @@ data class MetaResponse(
     @SerialName("pagination")
     val pagination: PaginationResponse
 ) {
-
     @Serializable
     data class PaginationResponse(
         @SerialName("total")
@@ -19,5 +19,12 @@ data class MetaResponse(
         val page: Int? = null,
         @SerialName("limit")
         val limit: Int? = null
+    )
+
+    fun toDomain() = Meta(
+        total = pagination.total,
+        pages = pagination.pages,
+        page = pagination.page,
+        limit = pagination.limit,
     )
 }

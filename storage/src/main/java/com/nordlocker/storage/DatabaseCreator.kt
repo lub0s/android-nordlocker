@@ -6,5 +6,7 @@ import com.nordlocker.storage.todo.TodoDatabase
 
 object DatabaseCreator {
     fun create(context: Context, name: String = "db"): TodoDatabase =
-        Room.databaseBuilder(context, TodoDatabase::class.java, name).build()
+        Room.databaseBuilder(context, TodoDatabase::class.java, name)
+            .fallbackToDestructiveMigration() // ez-mode
+            .build()
 }

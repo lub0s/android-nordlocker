@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TodoDao {
@@ -16,5 +17,5 @@ interface TodoDao {
     suspend fun updateOrCreate(list: List<TodoEntity>)
 
     @Query("SELECT * FROM $TABLE_NAME")
-    suspend fun getAll(): List<TodoEntity>
+    fun getAll(): Flow<List<TodoEntity>>
 }
