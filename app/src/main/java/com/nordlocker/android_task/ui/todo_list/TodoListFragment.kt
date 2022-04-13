@@ -5,17 +5,14 @@ import android.view.*
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.nordlocker.android_task.R
 import com.nordlocker.android_task.databinding.TodoListFragmentBinding
 import com.nordlocker.android_task.ui.shared.DividerDecoration
+import com.nordlocker.android_task.ui.shared.collectOnStarted
 import com.nordlocker.android_task.ui.todo_details.menuTitleRes
 import com.nordlocker.domain.models.TodosOrder
-import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class TodoListFragment : Fragment() {
@@ -39,22 +36,16 @@ class TodoListFragment : Fragment() {
 
         val adapter = bindAdapter(binding)
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.order
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collect { selectedOrder -> bindToolbarMenu(selectedOrder, binding) }
+        collectOnStarted(viewModel.order) { selectedOrder ->
+            bindToolbarMenu(binding, selectedOrder)
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.screenState
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collect { screenState -> bindScreenState(screenState, binding, adapter) }
+        collectOnStarted(viewModel.screenState) { screenState ->
+            bindScreenState(binding, adapter, screenState)
         }
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.syncEvents
-                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collect { bindSyncFailed(binding) }
+        collectOnStarted(viewModel.syncEvents) { syncFailed ->
+            bindSyncFailed(binding, syncFailed)
         }
     }
 
@@ -79,8 +70,8 @@ class TodoListFragment : Fragment() {
     }
 
     private fun bindToolbarMenu(
-        selectedOrder: TodosOrder,
         binding: TodoListFragmentBinding,
+        selectedOrder: TodosOrder,
     ) {
         val orders = TodosOrder.values()
 
@@ -93,7 +84,7 @@ class TodoListFragment : Fragment() {
                     isCheckable = true
                     isChecked = orderType == selectedOrder
                     setOnMenuItemClickListener {
-                        updateToSelectedOrder(orderType, binding)
+                        updateToSelectedOrder(binding, orderType)
                         true
                     }
                 }
@@ -102,17 +93,17 @@ class TodoListFragment : Fragment() {
     }
 
     private fun updateToSelectedOrder(
-        selected: TodosOrder,
         binding: TodoListFragmentBinding,
+        selected: TodosOrder,
     ) {
         viewModel.updateOrder(selected)
         binding.root.postDelayed({ binding.todos.scrollToPosition(0) }, 16 * 3L)
     }
 
     private fun bindScreenState(
-        syncStatus: TodosScreenState,
         binding: TodoListFragmentBinding,
         adapter: TodoListAdapter,
+        syncStatus: TodosScreenState,
     ) {
         binding.swipeRefreshLayout.isRefreshing = syncStatus.isLoading
         binding.swipeRefreshLayout.setOnRefreshListener { viewModel.fetchTodos() }
@@ -122,7 +113,7 @@ class TodoListFragment : Fragment() {
         adapter.submitList(todos)
     }
 
-    private fun bindSyncFailed(binding: TodoListFragmentBinding) {
+    private fun bindSyncFailed(binding: TodoListFragmentBinding, syncFailed: TodosSyncFailed) {
         Snackbar.make(binding.root, R.string.todos_sync_failed, Snackbar.LENGTH_LONG).apply {
             setAction(R.string.todos_sync_failed_action) { viewModel.fetchTodos() }
         }.show()
