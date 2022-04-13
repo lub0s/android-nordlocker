@@ -5,11 +5,15 @@ import com.nordlocker.domain.models.Todo
 import com.nordlocker.domain.models.TodosOrder
 import com.nordlocker.storage.todo.TodoEntity.Companion.toEntity
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 
-class TodoStorageImpl(database: TodoDatabase) : TodoStorage {
+class TodoStorageImpl(
+    todosDatabase: TodoDatabase,
+    private val orderDatabase: OrderDatabase
+) : TodoStorage {
 
-    private val dao = database.todoDao()
+    private val dao = todosDatabase.todoDao()
 
     override suspend fun updateOrCreate(list: List<Todo>) {
         dao.updateOrCreate(list.map { it.toEntity() })
@@ -18,11 +22,23 @@ class TodoStorageImpl(database: TodoDatabase) : TodoStorage {
     override suspend fun get(id: Int): Todo =
         dao.get(id).toDomain()
 
-    override fun observeAll(order: TodosOrder): Flow<List<Todo>> =
-        when (order) {
-            TodosOrder.RECENTLY_UPDATED -> dao.observeRecentlyUpdated()
-            TodosOrder.NOT_COMPLETED -> dao.observeNotCompleted()
-            TodosOrder.COMPLETED -> dao.observeCompleted()
-        }.map { todos -> todos.map { todo -> todo.toDomain() } }
+    override fun observeAll(): Flow<List<Todo>> =
+        orderDatabase.observe()
+            .flatMapLatest { order ->
+                when (order) {
+                    TodosOrder.RECENTLY_UPDATED -> dao.observeRecentlyUpdated()
+                    TodosOrder.NOT_COMPLETED -> dao.observeNotCompleted()
+                    TodosOrder.COMPLETED -> dao.observeCompleted()
+                }.map { todos -> todos.map { todo -> todo.toDomain() } }
+            }
 
+    override fun observeOrder(): Flow<TodosOrder> =
+        orderDatabase.observe()
+
+    override suspend fun getOrder(): TodosOrder =
+        orderDatabase.getOrder()
+
+    override suspend fun updateOrder(order: TodosOrder) {
+        orderDatabase.updateOrder(order)
+    }
 }

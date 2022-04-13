@@ -15,24 +15,22 @@ class TodoListViewModel(
 ) : ViewModel() {
 
     init {
-       viewModelScope.launch(Dispatchers.Default) {
-           val loaded = api.getTodoList().toDomain()
-           todoStorage.updateOrCreate(loaded.data.orEmpty())
-       }
+        fetchTodos()
     }
 
-    private val _order = MutableStateFlow(TodosOrder.NOT_COMPLETED)
-    val order: Flow<TodosOrder> = _order
+    val order = todoStorage.observeOrder()
+    val todos = todoStorage.observeAll()
 
-    val todos = _order.flatMapLatest { selectedOrder ->
-        todoStorage.observeAll(selectedOrder)
-    }.stateIn(
-        viewModelScope,
-        SharingStarted.WhileSubscribed(500),
-        emptyList()
-    )
+    fun updateOrder(order: TodosOrder) {
+        viewModelScope.launch(Dispatchers.Default) {
+            todoStorage.updateOrder(order)
+        }
+    }
 
-    fun updateOrder(selected: TodosOrder) {
-        _order.value = selected
+    private fun fetchTodos() {
+        viewModelScope.launch(Dispatchers.Default) {
+            val loaded = api.getTodoList().toDomain()
+            todoStorage.updateOrCreate(loaded.data.orEmpty())
+        }
     }
 }
