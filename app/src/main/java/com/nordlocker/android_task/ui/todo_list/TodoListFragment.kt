@@ -80,16 +80,28 @@ class TodoListFragment : Fragment() {
                 firstSubmenu.add(orderType.menuTitleRes).apply {
                     isCheckable = true
                     isChecked = orderType == selectedOrder
-                    setOnMenuItemClickListener { viewModel.updateOrder(orderType); true }
+                    setOnMenuItemClickListener { selectOrder(orderType); true }
                 }
             }
         }
     }
 
+    private fun selectOrder(selected: TodosOrder) {
+        val binding = requireNotNull(binding) { "TodoListFragmentBinding is null" }
 
-    private val Toolbar.firstSubmenu get() = (menu.getItem(0)).subMenu
-    private val TodosOrder.menuTitleRes get() = when (this) {
-        TodosOrder.RECENTLY_UPDATED -> "Recently updated"
-        TodosOrder.NOT_COMPLETED -> "Not completed"
+        viewModel.updateOrder(selected)
+        binding.root.postDelayed({ binding.todos.scrollToPosition(0) }, 16 * 3L)
     }
+
+    private val Toolbar.firstSubmenu
+        get() =
+            (menu.getItem(0)).subMenu
+
+    // todo string resources
+    private val TodosOrder.menuTitleRes
+        get() = when (this) {
+            TodosOrder.RECENTLY_UPDATED -> "Recently updated"
+            TodosOrder.NOT_COMPLETED -> "Not completed"
+            TodosOrder.COMPLETED -> "completed"
+        }.uppercase()
 }

@@ -21,7 +21,8 @@ class TodoStorageImpl(database: TodoDatabase) : TodoStorage {
     override fun observeAll(order: TodosOrder): Flow<List<Todo>> =
         when (order) {
             TodosOrder.RECENTLY_UPDATED -> dao.observeRecentlyUpdated()
-            TodosOrder.NOT_COMPLETED -> dao.observeCompleted()
+            TodosOrder.NOT_COMPLETED -> dao.observeNotCompleted()
+            TodosOrder.COMPLETED -> dao.observeCompleted()
         }.map { todos -> todos.map { todo -> todo.toDomain() } }
 
 }

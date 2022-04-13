@@ -16,11 +16,17 @@ interface TodoDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateOrCreate(list: List<TodoEntity>)
 
-    @Query("SELECT * FROM $TABLE_NAME ORDER BY NOT isCompleted")
+    @Query("SELECT * FROM $TABLE_NAME ORDER BY isCompleted ASC")
+    fun observeNotCompleted(): Flow<List<TodoEntity>>
+
+    @Query("SELECT * FROM $TABLE_NAME ORDER BY isCompleted DESC")
     fun observeCompleted(): Flow<List<TodoEntity>>
 
     @Query("SELECT * FROM $TABLE_NAME ORDER BY updatedAt")
     fun observeRecentlyUpdated(): Flow<List<TodoEntity>>
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE dueDate >= :current ORDER BY updatedAt")
+    fun observeClosestTo(current: Long): Flow<List<TodoEntity>>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE id = :id")
     suspend fun get(id: Int): TodoEntity
