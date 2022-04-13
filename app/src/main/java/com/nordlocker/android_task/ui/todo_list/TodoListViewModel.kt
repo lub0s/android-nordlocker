@@ -19,7 +19,13 @@ class TodoListViewModel(
     }
 
     val order = todoStorage.observeOrder()
+
     val todos = todoStorage.observeAll()
+        .stateIn(
+            viewModelScope,
+            SharingStarted.WhileSubscribed(500),
+            emptyList()
+        )
 
     fun updateOrder(order: TodosOrder) {
         viewModelScope.launch(Dispatchers.Default) {
@@ -27,10 +33,14 @@ class TodoListViewModel(
         }
     }
 
-    private fun fetchTodos() {
+    fun fetchTodos() {
         viewModelScope.launch(Dispatchers.Default) {
-            val loaded = api.getTodoList().toDomain()
-            todoStorage.updateOrCreate(loaded.data.orEmpty())
+            try {
+                val loaded = api.getTodoList().toDomain()
+                todoStorage.updateOrCreate(loaded.data.orEmpty())
+            } catch (throwable: Throwable) {
+
+            }
         }
     }
 }

@@ -9,6 +9,8 @@ interface TodoStorage {
     fun observeOrder(): Flow<TodosOrder>
 
     suspend fun get(id: Int): Todo
+
+    fun getDefaultOrder(): TodosOrder
     suspend fun getOrder(): TodosOrder
 
     suspend fun updateOrCreate(list: List<Todo>)

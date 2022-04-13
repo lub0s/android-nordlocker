@@ -1,6 +1,5 @@
 package com.nordlocker.android_task.ui.todo_list
 
-import android.graphics.Paint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil

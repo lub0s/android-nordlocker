@@ -35,6 +35,9 @@ class TodoStorageImpl(
     override fun observeOrder(): Flow<TodosOrder> =
         orderDatabase.observe()
 
+    override fun getDefaultOrder(): TodosOrder =
+        orderDatabase.defaultOrder
+
     override suspend fun getOrder(): TodosOrder =
         orderDatabase.getOrder()
 
