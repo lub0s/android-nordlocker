@@ -15,7 +15,8 @@
         android:name=".App"
         tools:ignore="AllowBackup">
 
-        <activity android:name=".ui.EntryActivity">
+        <activity android:name=".ui.EntryActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

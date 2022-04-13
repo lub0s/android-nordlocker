@@ -1,19 +1,15 @@
-
 plugins {
     id("com.android.library")
-    kotlin("kapt")
     kotlin("android")
+    kotlin("kapt")
 }
 
 android {
-    compileSdkVersion(30)
-    buildToolsVersion = "30.0.3"
+    compileSdk = 31
 
     defaultConfig {
-        minSdkVersion(19)
-        targetSdkVersion(30)
-        versionCode = 1
-        versionName = "1.0"
+        minSdk = 19
+        targetSdk = 31
     }
 
     compileOptions {

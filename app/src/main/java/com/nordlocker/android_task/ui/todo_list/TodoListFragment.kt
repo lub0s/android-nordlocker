@@ -27,10 +27,19 @@ class TodoListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO
 
-        binding?.button?.setOnClickListener {
-            findNavController().navigate(TodoListFragmentDirections.openDetails(10))
+        val binding = binding!!
+        val adapter = TodoListAdapter { todo ->
+            val id = requireNotNull(todo.id) { "Missing todo's id" }
+            findNavController().navigate(TodoListFragmentDirections.openDetails(id))
         }
+
+        binding.todos.adapter = adapter
+    }
+
+    override fun onDestroyView() {
+        binding?.todos?.adapter = null
+        binding = null
+        super.onDestroyView()
     }
 }
