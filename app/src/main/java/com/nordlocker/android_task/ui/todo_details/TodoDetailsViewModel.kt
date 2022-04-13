@@ -16,8 +16,8 @@ private const val todoContentKey = "todo-content-key"
 
 class TodoDetailsViewModel(
     todoId: Int,
+    savedStateHandle: SavedStateHandle,
     private val storage: TodoStorage,
-    private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     private val _todo = savedStateHandle.getLiveData<TodoDetail>(todoContentKey)
@@ -45,24 +45,31 @@ class TodoDetailsViewModel(
         viewModelScope.launch { _events.send(Close) }
     }
 
-    fun complete() {
+    fun markAsCompleted() =
+        updateCompleteStatus(true)
+
+    fun markAsNotCompleted() =
+        updateCompleteStatus(false)
+
+    private fun updateCompleteStatus(status: Boolean) {
         updateTodo {
             it.copy(
                 updatedAt = Instant.now().toEpochMilli(),
-                completed = true
+                completed = status
             )
         }
 
         viewModelScope.launch { _events.send(Close) }
     }
 
-    private fun updateTodo(update: (Todo) -> Todo) {
+    private fun updateTodo(update: (TodoDetail) -> TodoDetail) {
         val todo = requireNotNull(_todo.value) { "Missing todo while updating" }
 
         viewModelScope.launch(Dispatchers.Default) {
-            storage.updateOrCreate(
-                listOf(update(todo.toDomain()))
-            )
+            val updated = update(todo)
+
+            storage.updateOrCreate(listOf(updated.toDomain()))
+            _todo.postValue(updated)
         }
     }
 }

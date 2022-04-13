@@ -30,7 +30,6 @@
         android:elevation="8dp"
         android:gravity="center"
         android:padding="16dp"
-        android:text="complete"
         android:textAllCaps="true"
         android:textColor="?attr/colorOnPrimary"
         android:textStyle="bold"
