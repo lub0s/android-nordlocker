@@ -2,6 +2,8 @@
     <string name="app_name">Todosimo</string>
 
     <string name="todos_empty">No stored todos</string>
+    <string name="todos_sync_failed">Todos sync failed</string>
+    <string name="todos_sync_failed_action">Retry?</string>
 
     <string name="todo_message_hint">message</string>
 

@@ -9,6 +9,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.snackbar.Snackbar
 import com.nordlocker.android_task.R
 import com.nordlocker.android_task.databinding.TodoListFragmentBinding
 import com.nordlocker.android_task.ui.shared.DividerDecoration
@@ -50,9 +51,19 @@ class TodoListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.order
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
-                .collect { selectedOrder ->
-                    setOrdersMenu(selectedOrder, binding)
-                }
+                .collect { selectedOrder -> bindToolbarMenu(selectedOrder, binding) }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.syncStatus
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { syncStatus -> bindSyncStatus(syncStatus, binding) }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.syncEvents
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+                .collect { bindSyncFailed(binding) }
         }
     }
 
@@ -76,9 +87,9 @@ class TodoListFragment : Fragment() {
         return adapter
     }
 
-    private fun setOrdersMenu(
+    private fun bindToolbarMenu(
         selectedOrder: TodosOrder,
-        binding: TodoListFragmentBinding
+        binding: TodoListFragmentBinding,
     ) {
         val orders = TodosOrder.values()
 
@@ -91,7 +102,7 @@ class TodoListFragment : Fragment() {
                     isCheckable = true
                     isChecked = orderType == selectedOrder
                     setOnMenuItemClickListener {
-                        selectOrder(orderType, binding)
+                        updateToSelectedOrder(orderType, binding)
                         true
                     }
                 }
@@ -99,12 +110,26 @@ class TodoListFragment : Fragment() {
         }
     }
 
-    private fun selectOrder(
+    private fun updateToSelectedOrder(
         selected: TodosOrder,
-        binding: TodoListFragmentBinding
+        binding: TodoListFragmentBinding,
     ) {
         viewModel.updateOrder(selected)
         binding.root.postDelayed({ binding.todos.scrollToPosition(0) }, 16 * 3L)
+    }
+
+    private fun bindSyncStatus(
+        syncStatus: TodosSyncStatus,
+        binding: TodoListFragmentBinding,
+    ) {
+        binding.swipeRefreshLayout.isRefreshing = syncStatus.isLoading
+        binding.swipeRefreshLayout.setOnRefreshListener { viewModel.fetchTodos() }
+    }
+
+    private fun bindSyncFailed(binding: TodoListFragmentBinding) {
+        Snackbar.make(binding.root, R.string.todos_sync_failed, Snackbar.LENGTH_LONG).apply {
+            setAction(R.string.todos_sync_failed_action) { viewModel.fetchTodos() }
+        }.show()
     }
 
     private val Toolbar.firstSubmenu
