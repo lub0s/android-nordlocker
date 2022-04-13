@@ -6,6 +6,7 @@ import com.nordlocker.domain.models.Todo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import java.time.Instant
@@ -33,6 +34,7 @@ class TodoDetailsViewModel(
 
     fun update(title: String?) {
         updateTodo {
+            delay(50L) // debounce
             it.copy(
                 title = title,
                 updatedAt = Instant.now().toEpochMilli()
@@ -55,7 +57,7 @@ class TodoDetailsViewModel(
         }
     }
 
-    private fun updateTodo(update: (TodoDetail) -> TodoDetail) {
+    private fun updateTodo(update: suspend (TodoDetail) -> TodoDetail) {
         val todo = requireNotNull(_todo.value) { "Missing todo while updating" }
 
         pendingUpdateJob?.cancel()
