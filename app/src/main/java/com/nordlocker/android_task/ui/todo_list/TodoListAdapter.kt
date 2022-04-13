@@ -15,6 +15,8 @@ private val diffCallback = object : DiffUtil.ItemCallback<Todo>() {
     override fun areContentsTheSame(oldItem: Todo, newItem: Todo): Boolean = oldItem == newItem
 }
 
+// todo split into sections!
+
 class TodoListAdapter(
     private val listener: (Todo) -> Unit
 ) : ListAdapter<Todo, TodoViewHolder>(diffCallback) {

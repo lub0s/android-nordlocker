@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Todosimo</string>
+
+    <string name="todo_message_hint">message</string>
+
+    <string name="filter_recent">Recently updated</string>
+    <string name="filter_not_completed">Not completed</string>
+    <string name="filter_completed">completed</string>
+
+    <string name="todo_action_done">mark as not done</string>
+    <string name="todo_action_not_done">mark as done</string>
+
 </resources>

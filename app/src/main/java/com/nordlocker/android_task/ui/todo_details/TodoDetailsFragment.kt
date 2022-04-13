@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.res.ResourcesCompat
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -61,14 +63,20 @@ class TodoDetailsFragment : Fragment() {
         val binding = requireNotNull(binding) { "TodoDetailsFragmentBinding is null" }
 
         binding.message.apply {
-            text = todoDetail.title
+            if (text.toString() != todoDetail.title)
+                setText(todoDetail.title, TextView.BufferType.EDITABLE)
+
             strikedThruIf(todoDetail.completed)
+
+            addTextChangedListener(afterTextChanged = {
+                viewModel.update(it?.toString())
+            })
         }
 
         binding.complete.text = when (todoDetail.completed) {
-            true -> "mark as not complete"
-            false -> "mark as complete"
-        }
+            true -> R.string.todo_action_done
+            false -> R.string.todo_action_not_done
+        }.let(::getString)
 
         binding.complete.setOnClickListener {
             when (todoDetail.completed) {

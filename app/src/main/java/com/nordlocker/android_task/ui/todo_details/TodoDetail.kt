@@ -1,6 +1,8 @@
 package com.nordlocker.android_task.ui.todo_details
 
+import com.nordlocker.android_task.R
 import com.nordlocker.domain.models.Todo
+import com.nordlocker.domain.models.TodosOrder
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -31,3 +33,10 @@ fun Todo.toDetail() = TodoDetail(
     updatedAt = updatedAt,
     dueDate = dueDate,
 )
+
+internal val TodosOrder.menuTitleRes
+    get() = when (this) {
+        TodosOrder.RECENTLY_UPDATED -> R.string.filter_recent
+        TodosOrder.NOT_COMPLETED -> R.string.filter_not_completed
+        TodosOrder.COMPLETED -> R.string.filter_completed
+    }

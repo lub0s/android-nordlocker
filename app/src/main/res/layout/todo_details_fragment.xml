@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -11,16 +12,31 @@
         android:id="@+id/toolbar_layout"
         layout="@layout/appbar" />
 
-    <TextView
-        android:id="@+id/message"
+
+
+    <ScrollView
+        android:id="@+id/message_wrapper"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:textAlignment="textStart"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/complete"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
-        tools:text="sample text" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/message"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@null"
+            android:gravity="top|start"
+            android:hint="@string/todo_message_hint"
+            android:importantForAutofill="no"
+            android:inputType="textMultiLine"
+            android:minLines="20"
+            android:textAlignment="textStart"
+            tools:text="sample text" />
+
+    </ScrollView>
 
     <TextView
         android:id="@+id/complete"

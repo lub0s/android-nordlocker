@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import com.nordlocker.android_task.R
 import com.nordlocker.android_task.databinding.TodoListFragmentBinding
 import com.nordlocker.android_task.ui.shared.DividerDecoration
+import com.nordlocker.android_task.ui.todo_details.menuTitleRes
 import com.nordlocker.domain.models.TodosOrder
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -33,16 +34,9 @@ class TodoListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val adapter = TodoListAdapter { todo ->
-            val id = requireNotNull(todo.id) { "Missing todo's id" }
-            findNavController().navigate(TodoListFragmentDirections.openDetails(id))
-        }
-
         val binding = requireNotNull(binding) { "TodoListFragmentBinding is null" }
-        binding.todos.adapter = adapter
-        binding.todos.addItemDecoration(
-            DividerDecoration(view.context)
-        )
+
+        val adapter = bindAdapter(binding)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.todos
@@ -57,7 +51,7 @@ class TodoListFragment : Fragment() {
             viewModel.order
                 .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.STARTED)
                 .collect { selectedOrder ->
-                    setOrdersMenu(selectedOrder)
+                    setOrdersMenu(selectedOrder, binding)
                 }
         }
     }
@@ -68,9 +62,25 @@ class TodoListFragment : Fragment() {
         super.onDestroyView()
     }
 
-    private fun setOrdersMenu(selectedOrder: TodosOrder) {
+    private fun bindAdapter(binding: TodoListFragmentBinding): TodoListAdapter {
+        val adapter = TodoListAdapter { todo ->
+            val id = requireNotNull(todo.id) { "Missing todo's id" }
+            findNavController().navigate(TodoListFragmentDirections.openDetails(id))
+        }
+
+        binding.todos.adapter = adapter
+        binding.todos.addItemDecoration(
+            DividerDecoration(binding.root.context)
+        )
+
+        return adapter
+    }
+
+    private fun setOrdersMenu(
+        selectedOrder: TodosOrder,
+        binding: TodoListFragmentBinding
+    ) {
         val orders = TodosOrder.values()
-        val binding = requireNotNull(binding) { "TodoListFragmentBinding is null" }
 
         with(binding.toolbarLayout.toolbar) {
             menu.clear()
@@ -80,28 +90,23 @@ class TodoListFragment : Fragment() {
                 firstSubmenu.add(orderType.menuTitleRes).apply {
                     isCheckable = true
                     isChecked = orderType == selectedOrder
-                    setOnMenuItemClickListener { selectOrder(orderType); true }
+                    setOnMenuItemClickListener {
+                        selectOrder(orderType, binding)
+                        true
+                    }
                 }
             }
         }
     }
 
-    private fun selectOrder(selected: TodosOrder) {
-        val binding = requireNotNull(binding) { "TodoListFragmentBinding is null" }
-
+    private fun selectOrder(
+        selected: TodosOrder,
+        binding: TodoListFragmentBinding
+    ) {
         viewModel.updateOrder(selected)
         binding.root.postDelayed({ binding.todos.scrollToPosition(0) }, 16 * 3L)
     }
 
     private val Toolbar.firstSubmenu
-        get() =
-            (menu.getItem(0)).subMenu
-
-    // todo string resources
-    private val TodosOrder.menuTitleRes
-        get() = when (this) {
-            TodosOrder.RECENTLY_UPDATED -> "Recently updated"
-            TodosOrder.NOT_COMPLETED -> "Not completed"
-            TodosOrder.COMPLETED -> "completed"
-        }.uppercase()
+        get() = (menu.getItem(0)).subMenu
 }

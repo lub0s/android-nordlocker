@@ -4,13 +4,11 @@ import androidx.lifecycle.*
 import com.nordlocker.domain.interfaces.TodoStorage
 import com.nordlocker.domain.models.Todo
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 import java.time.Instant
-
-sealed class DetailsEvent
-object Close : DetailsEvent()
 
 private const val todoContentKey = "todo-content-key"
 
@@ -23,8 +21,7 @@ class TodoDetailsViewModel(
     private val _todo = savedStateHandle.getLiveData<TodoDetail>(todoContentKey)
     val todo: LiveData<TodoDetail> = _todo
 
-    private val _events = Channel<DetailsEvent>(capacity = Channel.UNLIMITED)
-    val events = _events.consumeAsFlow()
+    private var pendingUpdateJob: Job? = null
 
     init {
         if (_todo.value == null) {
@@ -34,15 +31,13 @@ class TodoDetailsViewModel(
         }
     }
 
-    fun update(title: String) {
+    fun update(title: String?) {
         updateTodo {
             it.copy(
                 title = title,
                 updatedAt = Instant.now().toEpochMilli()
             )
         }
-
-        viewModelScope.launch { _events.send(Close) }
     }
 
     fun markAsCompleted() =
@@ -58,14 +53,14 @@ class TodoDetailsViewModel(
                 completed = status
             )
         }
-
-        viewModelScope.launch { _events.send(Close) }
     }
 
     private fun updateTodo(update: (TodoDetail) -> TodoDetail) {
         val todo = requireNotNull(_todo.value) { "Missing todo while updating" }
 
-        viewModelScope.launch(Dispatchers.Default) {
+        pendingUpdateJob?.cancel()
+
+        pendingUpdateJob = viewModelScope.launch(Dispatchers.Default) {
             val updated = update(todo)
 
             storage.updateOrCreate(listOf(updated.toDomain()))
