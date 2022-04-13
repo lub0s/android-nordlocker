@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.nordlocker.android_task.network.TodoApi
 import com.nordlocker.domain.interfaces.TodoStorage
+import com.nordlocker.domain.models.TodosOrder
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 
 class TodoListViewModel(
@@ -21,10 +21,17 @@ class TodoListViewModel(
        }
     }
 
-    val todos = todoStorage.observeAll()
-        .stateIn(
-            viewModelScope,
-            SharingStarted.WhileSubscribed(500),
-            emptyList()
-        )
+    private val order = MutableStateFlow(TodosOrder.NOT_COMPLETED)
+
+    val todos = order.flatMapLatest { selectedOrder ->
+        todoStorage.observeAll(selectedOrder)
+    }.stateIn(
+        viewModelScope,
+        SharingStarted.WhileSubscribed(500),
+        emptyList()
+    )
+
+    fun updateOrder(selected: TodosOrder) {
+        order.value = selected
+    }
 }

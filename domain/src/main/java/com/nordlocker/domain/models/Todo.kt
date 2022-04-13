@@ -4,7 +4,7 @@ data class Todo(
     val id: Int? = null,
     val title: String? = null,
     val completed: Boolean,
-    val createdAt: String? = null,
-    val updatedAt: String? = null,
-    val dueDate: String? = null
+    val createdAt: Long? = null,
+    val updatedAt: Long? = null,
+    val dueDate: Long? = null
 )

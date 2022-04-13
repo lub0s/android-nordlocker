@@ -3,6 +3,9 @@ package com.nordlocker.android_task.network.response
 import com.nordlocker.domain.models.Todo
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZonedDateTime
 
 @Serializable
 data class TodoResponse(
@@ -21,6 +24,6 @@ data class TodoResponse(
         completed = status == "completed",
         createdAt = null,
         updatedAt = null,
-        dueDate = dueOn,
+        dueDate = ZonedDateTime.parse(dueOn).toInstant().toEpochMilli(),
     )
 }

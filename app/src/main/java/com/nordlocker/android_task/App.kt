@@ -11,7 +11,7 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
 
-        startKoin {
+        val koinApp = startKoin {
             androidContext(this@App)
             modules(storageModule, appModule)
         }

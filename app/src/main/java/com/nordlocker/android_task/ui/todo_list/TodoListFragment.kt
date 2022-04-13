@@ -7,13 +7,11 @@ import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.coroutineScope
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.nordlocker.android_task.R
-import com.nordlocker.android_task.databinding.TodoDetailsFragmentBinding
 import com.nordlocker.android_task.databinding.TodoListFragmentBinding
+import com.nordlocker.android_task.ui.shared.DividerDecoration
 import kotlinx.coroutines.launch
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -41,6 +39,9 @@ class TodoListFragment : Fragment() {
 
         val binding = requireNotNull(binding) { "TodoListFragmentBinding is null" }
         binding.todos.adapter = adapter
+        binding.todos.addItemDecoration(
+            DividerDecoration(view.context)
+        )
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.todos

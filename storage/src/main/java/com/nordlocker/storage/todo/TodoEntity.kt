@@ -9,9 +9,9 @@ class TodoEntity(
     @PrimaryKey val id: Int,
     val title: String,
     val isCompleted: Boolean,
-    val createdAt: String?,
-    val updatedAt: String?,
-    val dueDate: String
+    val createdAt: Long?,
+    val updatedAt: Long?,
+    val dueDate: Long?
 ) {
 
     companion object {
@@ -22,7 +22,7 @@ class TodoEntity(
                 isCompleted = completed,
                 createdAt = createdAt,
                 updatedAt = updatedAt,
-                dueDate = dueDate ?: ""
+                dueDate = dueDate
             )
     }
 

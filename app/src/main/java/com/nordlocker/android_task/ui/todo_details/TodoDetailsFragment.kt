@@ -9,10 +9,11 @@ import androidx.navigation.fragment.navArgs
 import com.nordlocker.android_task.R
 import com.nordlocker.android_task.databinding.TodoDetailsFragmentBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 class TodoDetailsFragment : Fragment() {
 
-    private val viewModel: TodoDetailsViewModel by viewModel()
+    private val viewModel: TodoDetailsViewModel by viewModel { parametersOf(args.todoId) }
     private val args: TodoDetailsFragmentArgs by navArgs()
 
     private var binding: TodoDetailsFragmentBinding? = null
@@ -28,13 +29,14 @@ class TodoDetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        // TODO
 
-        binding?.message?.text = "Details Fragment - argument received: ${args.todoId}"
+        viewModel.todo.observe(viewLifecycleOwner) { todo ->
+            binding?.message?.text = todo.title
+        }
     }
 
     override fun onDestroyView() {
-        super.onDestroyView()
         binding = null
+        super.onDestroyView()
     }
 }

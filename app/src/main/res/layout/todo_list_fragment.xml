@@ -7,6 +7,10 @@
     android:layout_height="match_parent"
     tools:context=".ui.todo_list.TodoListFragment">
 
+    <include
+        android:id="@+id/toolbar_layout"
+        layout="@layout/appbar" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/todos"
         android:layout_width="0dp"
@@ -15,7 +19,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout" />
 
     <FrameLayout
         android:id="@+id/empty"
@@ -27,7 +31,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar_layout"
         tools:visibility="gone">
 
         <TextView
