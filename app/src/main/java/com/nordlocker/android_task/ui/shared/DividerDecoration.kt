@@ -1,6 +1,5 @@
 package com.nordlocker.android_task.ui.shared
 
-
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Rect
