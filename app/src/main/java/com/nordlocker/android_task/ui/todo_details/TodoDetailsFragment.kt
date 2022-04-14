@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -37,10 +36,12 @@ class TodoDetailsFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bindToolbar()
+        val binding = requireNotNull(binding) { "TodoDetailsFragmentBinding is null" }
+
+        bindToolbar(binding)
 
         viewModel.todo.observe(viewLifecycleOwner) { todo ->
-            bindTodo(todo)
+            bindTodo(binding, todo)
         }
     }
 
@@ -49,9 +50,7 @@ class TodoDetailsFragment : Fragment() {
         super.onDestroyView()
     }
 
-    private fun bindToolbar() {
-        val binding = requireNotNull(binding) { "TodoDetailsFragmentBinding is null" }
-
+    private fun bindToolbar(binding: TodoDetailsFragmentBinding) {
         binding.toolbarLayout.toolbar.navigationIcon =
             AppCompatResources.getDrawable(requireContext(), R.drawable.ic_arrow_back)
 
@@ -60,9 +59,7 @@ class TodoDetailsFragment : Fragment() {
         }
     }
 
-    private fun bindTodo(todoDetail: TodoDetail) {
-        val binding = requireNotNull(binding) { "TodoDetailsFragmentBinding is null" }
-
+    private fun bindTodo(binding: TodoDetailsFragmentBinding, todoDetail: TodoDetail) {
         binding.message.apply {
             if (text.toString() != todoDetail.title)
                 setText(todoDetail.title, TextView.BufferType.EDITABLE)
