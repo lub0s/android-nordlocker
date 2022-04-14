@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.callbackFlow
 private const val storedOrderKey = "order-type"
 
 // assuming no name mangling from r8 on TodosOrder
-class OrderDatabase(context: Context) {
+class OrderPreference(context: Context) {
 
     val defaultOrder: TodosOrder = TodosOrder.NOT_COMPLETED
 

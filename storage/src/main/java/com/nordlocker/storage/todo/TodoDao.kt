@@ -19,8 +19,14 @@ interface TodoDao {
     @Query("SELECT * FROM $TABLE_NAME ORDER BY isCompleted ASC")
     fun observeNotCompleted(): Flow<List<TodoEntity>>
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE isCompleted = 0")
+    fun observeOnlyNotCompleted(): Flow<List<TodoEntity>>
+
     @Query("SELECT * FROM $TABLE_NAME ORDER BY isCompleted DESC")
     fun observeCompleted(): Flow<List<TodoEntity>>
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE isCompleted = 1")
+    fun observeOnlyCompleted(): Flow<List<TodoEntity>>
 
     @Query("SELECT * FROM $TABLE_NAME ORDER BY updatedAt")
     fun observeRecentlyUpdated(): Flow<List<TodoEntity>>

@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 class TodoStorageImpl(
     todosDatabase: TodoDatabase,
-    private val orderDatabase: OrderDatabase
+    private val orderPreference: OrderPreference
 ) : TodoStorage {
 
     private val dao = todosDatabase.todoDao()
@@ -24,7 +24,7 @@ class TodoStorageImpl(
         dao.get(id).toDomain()
 
     override fun observeAll(): Flow<List<Todo>> =
-        orderDatabase.observe()
+        orderPreference.observe()
             .flatMapLatest { order ->
                 when (order) {
                     TodosOrder.RECENTLY_UPDATED -> dao.observeRecentlyUpdated()
@@ -35,16 +35,16 @@ class TodoStorageImpl(
             .distinctUntilChanged()
 
     override fun observeOrder(): Flow<TodosOrder> =
-        orderDatabase.observe()
+        orderPreference.observe()
             .distinctUntilChanged()
 
     override fun getDefaultOrder(): TodosOrder =
-        orderDatabase.defaultOrder
+        orderPreference.defaultOrder
 
     override suspend fun getOrder(): TodosOrder =
-        orderDatabase.getOrder()
+        orderPreference.getOrder()
 
     override suspend fun updateOrder(order: TodosOrder) {
-        orderDatabase.updateOrder(order)
+        orderPreference.updateOrder(order)
     }
 }
