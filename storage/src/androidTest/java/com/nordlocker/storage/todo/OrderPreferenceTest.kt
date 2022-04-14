@@ -1,7 +1,6 @@
 package com.nordlocker.storage.todo
 
 import android.content.Context
-import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import app.cash.turbine.test
@@ -28,7 +27,7 @@ class OrderPreferenceTest {
     @Test
     fun testObserve() = runBlocking {
         orderPreference.observe().test {
-            assertEquals(TodosOrder.NOT_COMPLETED, awaitItem())
+            assertEquals(orderPreference.defaultOrder, awaitItem())
             orderPreference.updateOrder(TodosOrder.COMPLETED)
             assertEquals(TodosOrder.COMPLETED, awaitItem())
             cancel()
