@@ -2,6 +2,7 @@ package com.nordlocker.android_task.ui.todo_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nordlocker.android_task.common.AppDispatchers
 import com.nordlocker.domain.interfaces.TodoStorage
 import com.nordlocker.domain.models.Todo
 import com.nordlocker.domain.models.TodosOrder
@@ -23,6 +24,7 @@ data class TodosSyncFailed(
 class TodoListViewModel(
     private val todoStorage: TodoStorage,
     private val api: TodoApi,
+    private val dispatchers: AppDispatchers,
 ) : ViewModel() {
 
     val order = todoStorage.observeOrder()
@@ -46,7 +48,7 @@ class TodoListViewModel(
     }
 
     fun updateOrder(order: TodosOrder) {
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(dispatchers.default) {
             todoStorage.updateOrder(order)
         }
     }
@@ -54,7 +56,7 @@ class TodoListViewModel(
     fun fetchTodos() {
         isLoading.update { true }
 
-        viewModelScope.launch(Dispatchers.Default) {
+        viewModelScope.launch(dispatchers.default) {
             try {
                 val todoList = api.getTodoList().toDomain()
                 todoStorage.updateOrCreate(todoList.todos.orEmpty())

@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.nordlocker.android_task.common.AppDispatchers
 import com.nordlocker.domain.interfaces.TodoStorage
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -17,6 +18,7 @@ class TodoDetailsViewModel(
     todoId: Int,
     savedStateHandle: SavedStateHandle,
     private val storage: TodoStorage,
+    private val dispatchers: AppDispatchers,
 ) : ViewModel() {
 
     private val _todo = savedStateHandle.getLiveData<TodoDetail>(todoContentKey)
@@ -62,7 +64,7 @@ class TodoDetailsViewModel(
 
         pendingUpdateJob?.cancel()
 
-        pendingUpdateJob = viewModelScope.launch(Dispatchers.Default) {
+        pendingUpdateJob = viewModelScope.launch(dispatchers.default) {
             val updated = update(todo)
 
             storage.updateOrCreate(listOf(updated.toDomain()))
