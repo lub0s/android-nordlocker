@@ -9,5 +9,5 @@ import org.koin.dsl.module
 val storageModule = module {
     single { DatabaseCreator.create(get()) }
     single { OrderPreference(get()) }
-    single<TodoStorage> { TodoStorageImpl(todosDatabase = get(), orderDatabase = get()) }
+    single<TodoStorage> { TodoStorageImpl(todosDatabase = get(), orderPreference = get()) }
 }

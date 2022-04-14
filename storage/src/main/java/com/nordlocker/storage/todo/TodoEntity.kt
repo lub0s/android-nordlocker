@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey
 import com.nordlocker.domain.models.Todo
 
 @Entity(tableName = TodoDao.TABLE_NAME)
-class TodoEntity(
+data class TodoEntity(
     @PrimaryKey val id: Int,
     val title: String,
     val isCompleted: Boolean,
