@@ -17,6 +17,6 @@ data class TodoListResponse(
     fun toDomain() = TodoList(
         code = code,
         meta = meta?.toDomain(),
-        data = data?.map { it.toDomain() }
+        todos = data?.map { it.toDomain() }
     )
 }

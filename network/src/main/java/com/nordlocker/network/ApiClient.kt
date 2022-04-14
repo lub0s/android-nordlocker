@@ -8,7 +8,7 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import kotlinx.serialization.json.Json
 
-class ApiClient {
+internal class ApiClient {
     companion object {
         const val HOST = "gorest.co.in"
     }

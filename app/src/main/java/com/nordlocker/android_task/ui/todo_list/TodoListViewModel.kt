@@ -2,10 +2,10 @@ package com.nordlocker.android_task.ui.todo_list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.nordlocker.network.TodoApi
 import com.nordlocker.domain.interfaces.TodoStorage
 import com.nordlocker.domain.models.Todo
 import com.nordlocker.domain.models.TodosOrder
+import com.nordlocker.network.TodoApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
@@ -56,8 +56,8 @@ class TodoListViewModel(
 
         viewModelScope.launch(Dispatchers.Default) {
             try {
-                val loaded = api.getTodoList().toDomain()
-                todoStorage.updateOrCreate(loaded.data.orEmpty())
+                val todoList = api.getTodoList().toDomain()
+                todoStorage.updateOrCreate(todoList.todos.orEmpty())
             } catch (throwable: Throwable) {
                 _syncEvents.send(TodosSyncFailed(throwable))
             } finally {

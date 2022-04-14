@@ -7,11 +7,15 @@ import io.ktor.http.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 
-class TodoApi(private val client: ApiClient) {
+interface TodoApi {
+    suspend fun getTodoList(): TodoListResponse
+}
+
+internal class TodoApiImpl(private val client: ApiClient) : TodoApi {
 
     private val json = Json { ignoreUnknownKeys = true }
 
-    suspend fun getTodoList(): TodoListResponse = getResult(
+    override suspend fun getTodoList(): TodoListResponse = getResult(
         onCall = { client.httpClient.get { url { encodedPath = "public-api/todos" } } }
     )
 
